@@ -46,4 +46,5 @@ This project is licensed under the terms found in the [LICENSE](./LICENSE) file.
 ## Project Credits
 
 This project was built using assistance from Claude.
+
 Human Contributor(s): Krish Chandel
