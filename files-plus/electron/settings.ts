@@ -1,6 +1,9 @@
 import { BrowserWindow } from 'electron'
+import { fileURLToPath } from 'node:url'
 import path from 'node:path'
 import { VITE_DEV_SERVER_URL, RENDERER_DIST } from './main'
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 const settingsWindows: Record<string, BrowserWindow> = {}
 
@@ -18,7 +21,7 @@ export function openSettingsWindow(section: string) {
     maximizable: false,
     title: section.charAt(0).toUpperCase() + section.slice(1),
     webPreferences: {
-      preload: path.join(path.dirname(new URL(import.meta.url).pathname), 'preload.mjs'),
+      preload: path.join(__dirname, 'preload.mjs'),
     },
   })
 

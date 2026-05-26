@@ -1,7 +1,9 @@
-import { BrowserWindow, Menu, app, ipcMain } from "electron";
+import { BrowserWindow, Menu, app, ipcMain, dialog } from "electron";
+import { statfs } from "node:fs/promises";
 import { createRequire } from "node:module";
 import { fileURLToPath } from "node:url";
 import path from "node:path";
+const __dirname$2 = path.dirname(fileURLToPath(import.meta.url));
 const settingsWindows = {};
 function openSettingsWindow(section) {
   if (settingsWindows[section]) {
@@ -16,7 +18,7 @@ function openSettingsWindow(section) {
     maximizable: false,
     title: section.charAt(0).toUpperCase() + section.slice(1),
     webPreferences: {
-      preload: path.join(path.dirname(new URL(import.meta.url).pathname), "preload.mjs")
+      preload: path.join(__dirname$2, "preload.mjs")
     }
   });
   if (VITE_DEV_SERVER_URL) {
@@ -40,7 +42,7 @@ let win;
 function createWindow() {
   win = new BrowserWindow({
     title: "Files+",
-    icon: path.join(process.env.VITE_PUBLIC, "electron-vite.svg"),
+    icon: path.join(process.env.VITE_PUBLIC, "fpicon.png"),
     webPreferences: {
       preload: path.join(__dirname$1, "preload.mjs")
     }
@@ -85,7 +87,18 @@ const menu = Menu.buildFromTemplate([
   },
   {
     label: "Window",
-    submenu: [{ role: "minimize" }, { role: "close" }]
+    submenu: [
+      { role: "minimize", accelerator: "CmdOrCtrl+M" },
+      {
+        label: "Toggle Maximize",
+        accelerator: "F11",
+        click: () => {
+          const win2 = BrowserWindow.getFocusedWindow();
+          if (win2) win2.isMaximized() ? win2.unmaximize() : win2.maximize();
+        }
+      },
+      { role: "close", accelerator: "CmdOrCtrl+W" }
+    ]
   },
   {
     label: "Settings",
@@ -99,6 +112,20 @@ const menu = Menu.buildFromTemplate([
   {
     role: "help",
     submenu: [
+      {
+        label: "How to Use",
+        click: async () => {
+          const { shell } = await import("electron");
+          shell.openExternal("https://github.com/kchandel-nj/files-plus/wiki/Instructions");
+        }
+      },
+      {
+        label: "Report a Bug",
+        click: async () => {
+          const { shell } = await import("electron");
+          shell.openExternal("https://github.com/kchandel-nj/files-plus/issues/new");
+        }
+      },
       {
         label: "Learn More",
         click: async () => {
@@ -125,6 +152,28 @@ ipcMain.on("apply-theme", (_event, css) => {
   BrowserWindow.getAllWindows().forEach((win2) => {
     win2.webContents.send("apply-theme", css);
   });
+});
+ipcMain.handle("get-disk-usage", async () => {
+  console.log("get-disk-usage called");
+  try {
+    const { bfree, bsize, blocks } = await statfs(app.getPath("home"));
+    const total = blocks * bsize;
+    const free = bfree * bsize;
+    const used = total - free;
+    console.log("disk result:", { total, used, free });
+    return { total, used, free };
+  } catch (e) {
+    console.error("get-disk-usage error:", e);
+    return null;
+  }
+});
+ipcMain.handle("pick-folder", async () => {
+  console.log("pick-folder called");
+  const result = await dialog.showOpenDialog({
+    properties: ["openDirectory"]
+  });
+  console.log("pick-folder result:", result);
+  return result.canceled ? null : result.filePaths[0];
 });
 app.whenReady().then(createWindow);
 export {

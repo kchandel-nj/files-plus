@@ -1,4 +1,5 @@
-import { app, BrowserWindow, Menu, ipcMain } from 'electron'
+import { app, BrowserWindow, Menu, ipcMain, dialog } from 'electron'
+import { statfs } from 'node:fs/promises'
 import { createRequire } from 'node:module'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
@@ -20,7 +21,7 @@ let win: BrowserWindow | null
 function createWindow() {
   win = new BrowserWindow({
     title: 'Files+',
-    icon: path.join(process.env.VITE_PUBLIC, 'electron-vite.svg'),
+    icon: path.join(process.env.VITE_PUBLIC, 'fpicon.png'),
     webPreferences: {
       preload: path.join(__dirname, 'preload.mjs'),
     },
@@ -68,9 +69,20 @@ const menu = Menu.buildFromTemplate([
     ]
   },
   {
-    label: 'Window',
-    submenu: [{ role: 'minimize' }, { role: 'close' }]
-  },
+  label: 'Window',
+  submenu: [
+    { role: 'minimize', accelerator: 'CmdOrCtrl+M' },
+    {
+      label: 'Toggle Maximize',
+      accelerator: 'F11',
+      click: () => {
+        const win = BrowserWindow.getFocusedWindow()
+        if (win) win.isMaximized() ? win.unmaximize() : win.maximize()
+      }
+    },
+    { role: 'close', accelerator: 'CmdOrCtrl+W' }
+  ]
+},
   {
   label: 'Settings',
   submenu: [
@@ -83,6 +95,20 @@ const menu = Menu.buildFromTemplate([
   {
     role: 'help',
     submenu: [
+      {
+        label: 'How to Use',
+        click: async () => {
+          const { shell } = await import('electron')
+          shell.openExternal('https://github.com/kchandel-nj/files-plus/wiki/Instructions')
+        }
+      },
+      {
+        label: 'Report a Bug',
+        click: async () => {
+          const { shell } = await import('electron')
+          shell.openExternal('https://github.com/kchandel-nj/files-plus/issues/new')
+        }
+      },
       {
         label: 'Learn More',
         click: async () => {
@@ -113,6 +139,30 @@ ipcMain.on('apply-theme', (_event, css: string) => {
   BrowserWindow.getAllWindows().forEach(win => {
     win.webContents.send('apply-theme', css)
   })
+})
+
+ipcMain.handle('get-disk-usage', async () => {
+  console.log('get-disk-usage called')
+  try {
+    const { bfree, bsize, blocks } = await statfs(app.getPath('home'))
+    const total = blocks * bsize
+    const free = bfree * bsize
+    const used = total - free
+    console.log('disk result:', { total, used, free })
+    return { total, used, free }
+  } catch (e) {
+    console.error('get-disk-usage error:', e)
+    return null
+  }
+})
+
+ipcMain.handle('pick-folder', async () => {
+  console.log('pick-folder called')
+  const result = await dialog.showOpenDialog({
+    properties: ['openDirectory'],
+  })
+  console.log('pick-folder result:', result)
+  return result.canceled ? null : result.filePaths[0]
 })
 
 app.whenReady().then(createWindow)
