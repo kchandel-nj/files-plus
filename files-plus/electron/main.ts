@@ -1,11 +1,9 @@
 import { app, BrowserWindow, Menu, ipcMain, dialog } from 'electron'
 import { statfs } from 'node:fs/promises'
-import { createRequire } from 'node:module'
 import { fileURLToPath } from 'node:url'
 import path from 'node:path'
 import { openSettingsWindow } from './settings'
 
-const require = createRequire(import.meta.url)
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 process.env.APP_ROOT = path.join(__dirname, '..')
