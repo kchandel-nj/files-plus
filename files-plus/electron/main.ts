@@ -46,7 +46,11 @@ function createWindow() {
 const menu = Menu.buildFromTemplate([
   {
     label: 'File',
-    submenu: [{ role: 'quit' }]
+    submenu: [
+      { label: 'Import', accelerator: 'CmdOrCtrl+I', click: () => {} },
+      { type: 'separator' },
+      { role: 'quit' }
+    ]
   },
   {
     label: 'Edit',

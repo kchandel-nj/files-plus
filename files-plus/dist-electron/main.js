@@ -16,7 +16,9 @@ function openSettingsWindow(section) {
     resizable: false,
     minimizable: false,
     maximizable: false,
+    autoHideMenuBar: true,
     title: section.charAt(0).toUpperCase() + section.slice(1),
+    icon: path.join(process.env.VITE_PUBLIC, "fpicon.png"),
     webPreferences: {
       preload: path.join(__dirname$2, "preload.mjs")
     }
@@ -63,7 +65,12 @@ function createWindow() {
 const menu = Menu.buildFromTemplate([
   {
     label: "File",
-    submenu: [{ role: "quit" }]
+    submenu: [
+      { label: "Import", accelerator: "CmdOrCtrl+I", click: () => {
+      } },
+      { type: "separator" },
+      { role: "quit" }
+    ]
   },
   {
     label: "Edit",

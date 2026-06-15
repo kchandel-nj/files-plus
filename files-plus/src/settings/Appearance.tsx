@@ -11,7 +11,6 @@ export default function Appearance() {
   const [active, setActive] = useState<string | null>(null)
   const [pendingCSS, setPendingCSS] = useState<string | null>(null)
   const [imported, setImported] = useState<{ name: string; css: string }[]>([])
-  const [saved, setSaved] = useState(false)
 
   const selectBuiltIn = async (file: string, name: string) => {
     const res = await fetch(file)
@@ -19,14 +18,12 @@ export default function Appearance() {
     setPendingCSS(css)
     applyTheme(css)
     setActive(name)
-    setSaved(false)
   }
 
   const selectImported = (css: string, name: string) => {
     setPendingCSS(css)
     applyTheme(css)
     setActive(name)
-    setSaved(false)
   }
 
   const importCSS = () => {
@@ -42,7 +39,6 @@ export default function Appearance() {
       setPendingCSS(css)
       applyTheme(css)
       setActive(name)
-      setSaved(false)
     }
     input.click()
   }
@@ -55,7 +51,6 @@ export default function Appearance() {
     } catch (e) {
       console.error('ipcRenderer.send failed:', e)
     }
-    setSaved(true)
   }
 
   return (
@@ -90,12 +85,9 @@ export default function Appearance() {
         <button onClick={importCSS} style={{ padding: '8px 16px', borderRadius: 8, border: '1px solid var(--border)', background: 'var(--bg-secondary)', color: 'var(--text-primary)', fontSize: 13, cursor: 'pointer', fontFamily: 'inherit' }}>
           + Import CSS theme
         </button>
-        <button onClick={applyToAll} disabled={!pendingCSS} style={{ padding: '8px 16px', borderRadius: 8, border: 'none', background: pendingCSS ? 'var(--text-primary)' : 'var(--border)', color: pendingCSS ? 'var(--bg-primary)' : 'var(--text-muted)', fontSize: 13, cursor: pendingCSS ? 'pointer' : 'default', fontFamily: 'inherit' }}>
+        <button onClick={applyToAll} disabled={!pendingCSS} style={{ padding: '8px 16px', borderRadius: 8, border: '1px solid var(--border)', background: 'var(--bg-secondary)', color: 'var(--text-primary)', fontSize: 13, cursor: pendingCSS ? 'pointer' : 'default', fontFamily: 'inherit', opacity: pendingCSS ? 1 : 0.4 }}>
           OK
         </button>
-        <span style={{ fontSize: 12, color: '#940000', visibility: saved ? 'visible' : 'hidden' }}>
-          Restart to update appearance!
-        </span>
       </div>
     </div>
   )

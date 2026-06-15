@@ -19,7 +19,9 @@ export function openSettingsWindow(section: string) {
     resizable: false,
     minimizable: false,
     maximizable: false,
+    autoHideMenuBar: true,
     title: section.charAt(0).toUpperCase() + section.slice(1),
+    icon: path.join(process.env.VITE_PUBLIC!, 'fpicon.png'),
     webPreferences: {
       preload: path.join(__dirname, 'preload.mjs'),
     },
