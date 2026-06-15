@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react'
 import Sidebar from './components/Sidebar'
 import TopBar from './components/TopBar'
 import FileGrid from './components/FileGrid'
-import './App.css'
 
 function App() {
   const [storageLocation, setStorageLocation] = useState<string | null>(null)

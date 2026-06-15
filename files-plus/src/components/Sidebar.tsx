@@ -109,7 +109,8 @@ export default function Sidebar() {
                   onKeyDown={e => { if (e.key === 'Enter') confirmRename(cat.id); if (e.key === 'Escape') setRenaming(null) }}
                   style={{ flex: 1, padding: '4px 6px', borderRadius: 6, border: '1px solid var(--border)', fontSize: 13, outline: 'none', fontFamily: 'inherit', background: 'var(--bg-primary)', color: 'var(--text-primary)' }}
                 />
-                <button onClick={() => confirmRename(cat.id)} style={{ padding: '4px 8px', borderRadius: 6, border: 'none', background: 'var(--text-primary)', color: 'var(--bg-primary)', fontSize: 12, cursor: 'pointer', fontFamily: 'inherit' }}>OK</button>
+                <button onClick={() => setRenaming(null)} className="btn btn-cancel">Cancel</button>
+                <button onClick={() => confirmRename(cat.id)} className="btn btn-confirm">OK</button>
               </div>
             ) : recoloring === cat.id ? (
               <div style={{ background: 'var(--bg-primary)', border: '1px solid var(--border)', borderRadius: 10, padding: 10, display: 'flex', flexDirection: 'column', gap: 8 }}>
@@ -128,8 +129,8 @@ export default function Sidebar() {
                   {showRecolorPicker ? '− hide picker' : '+ more colors'}
                 </span>
                 <div style={{ display: 'flex', gap: 6 }}>
-                  <button onClick={() => { setRecoloring(null); setShowRecolorPicker(false) }} style={{ flex: 1, padding: 5, fontSize: 12, borderRadius: 6, border: '1px solid var(--border)', background: 'transparent', cursor: 'pointer', fontFamily: 'inherit' }}>Cancel</button>
-                  <button onClick={() => confirmRecolor(cat.id)} style={{ flex: 1, padding: 5, fontSize: 12, borderRadius: 6, border: 'none', background: '#222', color: 'var(--bg-primary)', cursor: 'pointer', fontFamily: 'inherit' }}>OK</button>
+                  <button onClick={() => { setRecoloring(null); setShowRecolorPicker(false) }} className="btn btn-cancel" style={{ flex: 1 }}>Cancel</button>
+                  <button onClick={() => confirmRecolor(cat.id)} className="btn btn-confirm" style={{ flex: 1 }}>OK</button>
                 </div>
               </div>
             ) : (
@@ -182,7 +183,7 @@ export default function Sidebar() {
               onChange={e => setNewName(e.target.value)}
               onKeyDown={e => e.key === 'Enter' && addCategory()}
               placeholder="Category name"
-              style={{ padding: '6px 8px', borderRadius: 6, border: '1px solid var(--border)', fontSize: 13, outline: 'none', fontFamily: 'inherit' }}
+              style={{ padding: '6px 8px', borderRadius: 6, border: '1px solid var(--border)', fontSize: 13, outline: 'none', fontFamily: 'inherit', background: 'var(--bg-secondary)', color: 'var(--text-primary)' }}
             />
             <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
               {PRESETS.map(color => (
@@ -199,8 +200,8 @@ export default function Sidebar() {
               {showPicker ? '− hide picker' : '+ more colors'}
             </span>
             <div style={{ display: 'flex', gap: 6 }}>
-              <button onClick={() => { setForming(false); setShowPicker(false) }} style={{ flex: 1, padding: 5, fontSize: 12, borderRadius: 6, border: '1px solid var(--border)', background: '#fff', color: '#000', cursor: 'pointer', fontFamily: 'inherit' }}>Cancel</button>
-              <button onClick={addCategory} style={{ flex: 1, padding: 5, fontSize: 12, borderRadius: 6, border: '1px solid var(--border)', background: 'var(--bg-secondary)', color: 'var(--text-primary)', cursor: 'pointer', fontFamily: 'inherit' }}>Add</button>
+              <button onClick={() => { setForming(false); setShowPicker(false) }} className="btn btn-cancel" style={{ flex: 1 }}>Cancel</button>
+              <button onClick={addCategory} className="btn btn-confirm" style={{ flex: 1 }}>Add</button>
             </div>
           </div>
         ) : (
@@ -218,12 +219,8 @@ export default function Sidebar() {
               This will permanently delete the category. This action cannot be undone.
             </p>
             <div style={{ display: 'flex', gap: 8 }}>
-              <button onClick={() => setConfirmDelete(null)} style={{ flex: 1, padding: '8px 0', borderRadius: 8, border: '1px solid var(--border)', background: 'transparent', color: 'var(--text-primary)', fontSize: 13, cursor: 'pointer', fontFamily: 'inherit' }}>
-                Cancel
-              </button>
-              <button onClick={() => deleteCategory(confirmDelete.id)} style={{ flex: 1, padding: '8px 0', borderRadius: 8, border: 'none', background: '#e05a5a', color: '#fff', fontSize: 13, fontWeight: 500, cursor: 'pointer', fontFamily: 'inherit' }}>
-                Delete
-              </button>
+              <button onClick={() => setConfirmDelete(null)} className="btn btn-cancel" style={{ flex: 1 }}>Cancel</button>
+              <button onClick={() => deleteCategory(confirmDelete.id)} className="btn btn-danger" style={{ flex: 1 }}>Delete</button>
             </div>
           </div>
         </div>

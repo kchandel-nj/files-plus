@@ -8,7 +8,8 @@ import Storage from './settings/Storage.tsx'
 import About from './settings/About.tsx'
 import './index.css'
 import { loadSavedTheme, listenForTheme } from './utils/theme'
-loadSavedTheme();
+
+loadSavedTheme()
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
@@ -26,8 +27,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
 
 window.addEventListener('DOMContentLoaded', () => {
   listenForTheme()
-})
-
-window.ipcRenderer.on('main-process-message', (_event, message) => {
-  console.log(message)
+  window.ipcRenderer.on('main-process-message', (_event, message) => {
+    console.log(message)
+  })
 })
